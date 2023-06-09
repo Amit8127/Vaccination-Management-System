@@ -1,5 +1,6 @@
 package com.example.vaccineManagementSystem.Controllers;
 
+import com.example.vaccineManagementSystem.Dtos.RequestDtos.UpdateEmailDto;
 import com.example.vaccineManagementSystem.Models.User;
 import com.example.vaccineManagementSystem.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +16,21 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/add")
-    public User add(@RequestBody User user) {
+    public String add(@RequestBody User user) {
         try {
             return userService.add(user);
-        } catch (Exception ex) {
-            System.out.println(ex.toString());
-            return null;
+        } catch (RuntimeException re) {
+            return re.getMessage();
         }
     }
 
     @GetMapping("/getVaccinationDate")
     public Date getVaccinationDate(@RequestParam("userId") Integer userId) {
         return userService.getVaccinationDate(userId);
+    }
+
+    @PutMapping("/updateEmail")
+    public String updateEmail(@RequestBody UpdateEmailDto updateEmailDto) {
+        return userService.updateEmailDto(updateEmailDto);
     }
 }

@@ -6,4 +6,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
+
+    //just define the function to execute:
+    User findByEmailId(String emailId);
+    //prebuilt functions : and you can use it directly....
+
+
 }

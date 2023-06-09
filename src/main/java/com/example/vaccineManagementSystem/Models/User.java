@@ -4,7 +4,7 @@ import com.example.vaccineManagementSystem.Enums.Gender;
 import jakarta.persistence.*;
 
 @Entity
-@Table
+@Table(name = "users")
 public class User {
 
     @Id
@@ -21,6 +21,7 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
     private String mobileNo;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Dose dose;
 
