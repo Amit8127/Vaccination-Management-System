@@ -3,9 +3,9 @@ package com.example.vaccineManagementSystem.Dtos.RequestDtos;
 import lombok.Data;
 
 @Data
-public class UpdateEmailDto {
+public class CancelAppointmentRequestDto {
 
-    private Integer userId;
-    private String newEmailId;
+    private Integer appointmentId;
+
 
 }

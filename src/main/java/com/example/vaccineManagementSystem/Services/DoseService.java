@@ -1,11 +1,21 @@
 package com.example.vaccineManagementSystem.Services;
 
+import com.example.vaccineManagementSystem.Enums.AppointmentStatus;
+import com.example.vaccineManagementSystem.Exceptions.AppointmentDateException;
+import com.example.vaccineManagementSystem.Exceptions.UserAlreadyVaccinated;
+import com.example.vaccineManagementSystem.Exceptions.UserNotFound;
+import com.example.vaccineManagementSystem.Models.Appointment;
 import com.example.vaccineManagementSystem.Models.Dose;
 import com.example.vaccineManagementSystem.Models.User;
+import com.example.vaccineManagementSystem.Repositories.AppointmentRepository;
 import com.example.vaccineManagementSystem.Repositories.DoseRepository;
 import com.example.vaccineManagementSystem.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 public class DoseService {
@@ -16,15 +26,30 @@ public class DoseService {
     @Autowired
     UserRepository userRepository;
 
-    public void giveDose(String doseId, Integer userId) {
-        User user = userRepository.findById(userId).get();
+    @Autowired
+    AppointmentRepository appointmentRepository;
 
-        Dose currDose = new Dose();
-        currDose.setDoseId(doseId);
-        currDose.setUser(user);
-
-        user.setDose(currDose);
+    public String giveDose(String doseId, Integer appointmentId) throws UserNotFound, UserAlreadyVaccinated{
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
+        if(appointmentOpt.isEmpty()) {
+            throw new UserNotFound();
+        }
+        Appointment appointment = appointmentOpt.get();
+        if(appointment.getDate().compareTo(Date.valueOf(LocalDate.now())) != 0) {
+            throw new AppointmentDateException(appointment.getDate().toString());
+        }
+        User user = appointment.getUser();
+        if(user.getDose() != null) {
+            throw new UserAlreadyVaccinated();
+        }
+        Dose dose = new Dose();
+        dose.setDoseId(doseId);
+        dose.setUser(user);
+        user.setDose(dose);
+        appointment.setAppointmentStatus(AppointmentStatus.COMPLETED);
+        appointmentRepository.save(appointment);
         userRepository.save(user);
 //        Child will automatically saved because of cascading effect
+        return "Dose has been Given Successfully to: "+user.getName();
     }
 }

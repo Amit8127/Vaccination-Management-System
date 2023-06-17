@@ -1,25 +1,26 @@
 package com.example.vaccineManagementSystem.Controllers;
 
-import com.example.vaccineManagementSystem.Services.DoseService;
+import com.example.vaccineManagementSystem.Models.VaccinationCentre;
+import com.example.vaccineManagementSystem.Services.VaccinationCentreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/doses")
-public class DoseController {
+@RequestMapping("/vaccinationCentres")
+public class VaccinationCentreController {
 
     @Autowired
-    DoseService doseService;
+    private VaccinationCentreService vaccinationCentreService;
 
-    @PostMapping("/giveDose")
-    public ResponseEntity<String> giveDose(@RequestParam("doseId") String doseId, @RequestParam("appointmentId") Integer appointmentId) {
+    @PostMapping("/add")
+    public ResponseEntity<String> addVaccinationCentre(@RequestBody VaccinationCentre vaccinationCentre) {
         try {
-            String result = doseService.giveDose(doseId, appointmentId);
+            String result = vaccinationCentreService.addVaccinationCentre(vaccinationCentre);
             return new ResponseEntity<>(result, HttpStatus.CREATED);
         } catch (RuntimeException re) {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.NOT_FOUND);

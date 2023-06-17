@@ -1,57 +1,30 @@
 package com.example.vaccineManagementSystem.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
-
-import java.util.Date;
+import java.sql.Date;
 
 @Entity
-@Table(name = "doses")
+@Table(name = "DOSES")
+@Data
 public class Dose {
 
+    @Column(name = "Id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id; //primary key
 
-    @Column(unique = true)
+    @Column(unique = true, name = "DoseId")
     private String doseId; //unique key
 
+    @Column(name = "VaccinationDate")
     @CreationTimestamp
     private Date vaccinationDate;
 
     @OneToOne
-    @JoinColumn
+    @JoinColumn(name = "UserId")
+    @JsonIgnore
     private User user;
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getDoseId() {
-        return doseId;
-    }
-
-    public void setDoseId(String doseId) {
-        this.doseId = doseId;
-    }
-
-    public Date getVaccinationDate() {
-        return vaccinationDate;
-    }
-
-    public void setVaccinationDate(Date vaccinationDate) {
-        this.vaccinationDate = vaccinationDate;
-    }
 }
