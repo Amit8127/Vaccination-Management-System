@@ -17,7 +17,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/add")
+    @PostMapping("/addNew")
     public String add(@RequestBody User user) {
         try {
             return userService.add(user);
@@ -45,18 +45,18 @@ public class UserController {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
-    @GetMapping("/getVaccinationDate")
-    public ResponseEntity<String> getVaccinationDate(@RequestParam("userId") Integer userId) {
+    @GetMapping("/getVaccinatedDate")
+    public ResponseEntity<String> getVaccinatedDate(@RequestParam("userId") Integer userId) {
         try {
-            Date date = userService.getVaccinationDate(userId);
+            Date date = userService.getVaccinatedDate(userId);
             return new ResponseEntity<>(date.toString(), HttpStatus.FOUND);
         } catch (RuntimeException re) {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
-    @PutMapping("/updateEmail")
-    public ResponseEntity<String> updateEmail(@RequestBody UpdateEmailDto updateEmailDto) {
+    @PutMapping("/updateUserEmail")
+    public ResponseEntity<String> updateUserEmail(@RequestBody UpdateEmailDto updateEmailDto) {
         try {
             String result = userService.updateEmailDto(updateEmailDto);
             return new ResponseEntity<>(result, HttpStatus.CREATED);

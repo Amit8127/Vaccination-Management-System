@@ -29,7 +29,7 @@ public class UserService {
         return "User has been added successfully";
     }
 
-    public Date getVaccinationDate(Integer userId) throws UserNotFound, UserIsNotVaccinated{
+    public Date getVaccinatedDate(Integer userId) throws UserNotFound, UserIsNotVaccinated{
         Optional<User> userOpt = userRepository.findById(userId);
         if(userOpt.isEmpty()) {
             throw new UserNotFound();

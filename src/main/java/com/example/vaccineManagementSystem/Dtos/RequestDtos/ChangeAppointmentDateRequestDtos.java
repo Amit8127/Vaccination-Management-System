@@ -5,7 +5,7 @@ import lombok.Data;
 import java.sql.Date;
 
 @Data
-public class ChangeAppointmentDateRequest {
+public class ChangeAppointmentDateRequestDtos {
 
     private Integer appointmentId;
 
