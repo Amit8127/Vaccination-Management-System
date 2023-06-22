@@ -40,7 +40,7 @@ public class AppointmentService {
     @Autowired
     AppointmentRepository appointmentRepository;
 
-    public String bookingAppointment(AppointmentRequestDto appointmentRequestDto) throws DoctorNotFound, UserNotFound, PendingAppointment{
+    public String bookingAppointment(AppointmentRequestDto appointmentRequestDto) throws DoctorNotFound, UserNotFound, PendingAppointment, DoctorIsNotAssociateAnyCenter{
         Integer doctorId = appointmentRequestDto.getDocId();
         Integer userId = appointmentRequestDto.getUserId();
         Date date = appointmentRequestDto.getAppointmentDate();
@@ -108,7 +108,7 @@ public class AppointmentService {
         return "Your new appointment is "+date;
     }
 
-    public String deleteAppointmentById(CancelAppointmentRequestDto cancelAppointmentRequestDto) throws BookingAppointmentIsNotPresent, UserDoNotHaveAppointmentId, AppointmentCanNotDelete{
+    public String deleteAppointmentById(CancelAppointmentRequestDto cancelAppointmentRequestDto) throws BookingAppointmentIsNotPresent, UserDoNotHaveAppointmentId, AppointmentCanNotDelete, UserNotFound{
         Integer appointmentId = cancelAppointmentRequestDto.getAppointmentId();
         Integer userId = cancelAppointmentRequestDto.getUserId();
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
