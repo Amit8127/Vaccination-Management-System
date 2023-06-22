@@ -1,5 +1,6 @@
 package com.example.vaccineManagementSystem.Controllers;
 
+import com.example.vaccineManagementSystem.Dtos.RequestDtos.AddUserDto;
 import com.example.vaccineManagementSystem.Dtos.RequestDtos.UpdateEmailDto;
 import com.example.vaccineManagementSystem.Models.User;
 import com.example.vaccineManagementSystem.Services.UserService;
@@ -18,10 +19,10 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/addNew")
-    public String add(@RequestBody User user) {
+    public String add(@RequestBody AddUserDto addUserDto) {
         try {
-            return userService.add(user);
-        } catch (RuntimeException re) {
+            return userService.add(addUserDto);
+        } catch (Exception re) {
             return re.getMessage();
         }
     }
@@ -31,7 +32,7 @@ public class UserController {
         try {
             User user = userService.getUserById(userId);
             return new ResponseEntity<>(user.getName(), HttpStatus.FOUND);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -41,7 +42,7 @@ public class UserController {
         try {
             User user = userService.getUserByEmailId(emailId);
             return new ResponseEntity<>(user.getName(), HttpStatus.FOUND);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -50,7 +51,7 @@ public class UserController {
         try {
             Date date = userService.getVaccinatedDate(userId);
             return new ResponseEntity<>(date.toString(), HttpStatus.FOUND);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -60,7 +61,7 @@ public class UserController {
         try {
             String result = userService.updateEmailDto(updateEmailDto);
             return new ResponseEntity<>(result, HttpStatus.CREATED);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

@@ -3,6 +3,7 @@ package com.example.vaccineManagementSystem.Controllers;
 import com.example.vaccineManagementSystem.Dtos.RequestDtos.AppointmentRequestDto;
 import com.example.vaccineManagementSystem.Dtos.RequestDtos.CancelAppointmentRequestDto;
 import com.example.vaccineManagementSystem.Dtos.RequestDtos.ChangeAppointmentDateRequestDtos;
+import com.example.vaccineManagementSystem.Dtos.ResponcseDtos.DoctorDtoForCentre;
 import com.example.vaccineManagementSystem.Enums.Gender;
 import com.example.vaccineManagementSystem.Services.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,47 +25,47 @@ public class AppointmentController {
         try {
             String result = appointmentService.bookingAppointment(appointmentRequestDto);
             return new ResponseEntity<>(result, HttpStatus.CREATED);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping("/allDoctors")
-    public ResponseEntity<List<String>> getAllDoctorsByCenterId(@RequestParam Integer centerId) {
+    @GetMapping("/allDoctors/{centerId}")
+    public ResponseEntity<List<DoctorDtoForCentre>> getAllDoctorsByCenterId(@PathVariable Integer centerId) {
         try {
-            List<String> list = appointmentService.getAllDoctorsByCenterId(centerId);
+            List<DoctorDtoForCentre> list = appointmentService.getAllDoctorsByCenterId(centerId);
             return new ResponseEntity<>(list, HttpStatus.FOUND);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping("/allMaleDoctors")
-    public ResponseEntity<List<String>> getAllMaleDoctorsByCenterId(@RequestParam Integer centerId) {
+    @GetMapping("/allMaleDoctors/{centerId}")
+    public ResponseEntity<List<DoctorDtoForCentre>> getAllMaleDoctorsByCenterId(@PathVariable Integer centerId) {
         try {
-            List<String> list = appointmentService.getAllMaleDoctorsByCenterId(centerId);
+            List<DoctorDtoForCentre> list = appointmentService.getAllMaleDoctorsByCenterId(centerId);
             return new ResponseEntity<>(list, HttpStatus.FOUND);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping("/allFemaleDoctors")
-    public ResponseEntity<List<String>> getAllFemaleDoctorsByCenterId(@RequestParam Integer centerId) {
+    @GetMapping("/allFemaleDoctors/{centerId}")
+    public ResponseEntity<List<DoctorDtoForCentre>> getAllFemaleDoctorsByCenterId(@PathVariable Integer centerId) {
         try {
-            List<String> list = appointmentService.getAllFemaleDoctorsByCenterId(centerId);
+            List<DoctorDtoForCentre> list = appointmentService.getAllFemaleDoctorsByCenterId(centerId);
             return new ResponseEntity<>(list, HttpStatus.FOUND);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping("/doctorsBasedOnAgeAndGender")
-    public ResponseEntity<List<String>> getAllDoctorsBasedOnAgeAndGenderByCenterId(@RequestParam Integer centerId, @RequestParam Integer greaterThenAge, @RequestParam Gender gender) {
+    @GetMapping("/doctorsBasedOnAgeAndGender/{centerId}")
+    public ResponseEntity<List<DoctorDtoForCentre>> getAllDoctorsBasedOnAgeAndGenderByCenterId(@PathVariable Integer centerId, @RequestParam Integer greaterThenAge, @RequestParam Gender gender) {
         try {
-            List<String> list = appointmentService.getAllDoctorsBasedOnAgeAndGenderByCenterId(centerId, greaterThenAge, gender);
+            List<DoctorDtoForCentre> list = appointmentService.getAllDoctorsBasedOnAgeAndGenderByCenterId(centerId, greaterThenAge, gender);
             return new ResponseEntity<>(list, HttpStatus.FOUND);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
@@ -74,7 +74,7 @@ public class AppointmentController {
         try {
             String result = appointmentService.changeDateByBookingId(changeAppointmentDateRequestDtos);
             return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

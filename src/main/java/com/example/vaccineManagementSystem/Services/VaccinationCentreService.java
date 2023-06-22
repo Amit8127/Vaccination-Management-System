@@ -46,7 +46,7 @@ public class VaccinationCentreService {
         return centresName;
     }
 
-    public String deleteVaccinationCentreById(Integer vaccinationCentreId) {
+    public String deleteVaccinationCentreById(Integer vaccinationCentreId) throws VaccinationCentreNotFound{
         Optional<VaccinationCentre> vaccinationCentreOpt = vaccinationCentreRepository.findById(vaccinationCentreId);
         if(vaccinationCentreOpt.isEmpty()) {
             throw new VaccinationCentreNotFound();

@@ -1,20 +1,20 @@
 package com.example.vaccineManagementSystem.Services;
 
-import com.example.vaccineManagementSystem.Dtos.RequestDtos.AlreadyAssociatedDtos;
+import com.example.vaccineManagementSystem.Dtos.RequestDtos.AddDoctorDto;
+import com.example.vaccineManagementSystem.Dtos.RequestDtos.UpdateDoctorWithEmailId;
+import com.example.vaccineManagementSystem.Dtos.ResponcseDtos.DoctorDto;
+import com.example.vaccineManagementSystem.Exceptions.*;
 import com.example.vaccineManagementSystem.Dtos.RequestDtos.AssociateDoctorDto;
-import com.example.vaccineManagementSystem.Dtos.RequestDtos.DoctorUpdateRequestDto;
+import com.example.vaccineManagementSystem.Dtos.RequestDtos.DoctorCentreUpdateRequestDto;
 import com.example.vaccineManagementSystem.Enums.AppointmentStatus;
 import com.example.vaccineManagementSystem.Enums.Gender;
-import com.example.vaccineManagementSystem.Exceptions.DoctorAlreadyPresentException;
-import com.example.vaccineManagementSystem.Exceptions.DoctorNotFound;
-import com.example.vaccineManagementSystem.Exceptions.EmailShouldNotNullException;
-import com.example.vaccineManagementSystem.Exceptions.VaccinationCentreNotFound;
 import com.example.vaccineManagementSystem.Models.Appointment;
 import com.example.vaccineManagementSystem.Models.Doctor;
 import com.example.vaccineManagementSystem.Models.VaccinationCentre;
 import com.example.vaccineManagementSystem.Repositories.AppointmentRepository;
 import com.example.vaccineManagementSystem.Repositories.DoctorRepository;
 import com.example.vaccineManagementSystem.Repositories.VaccinationCentreRepository;
+import com.example.vaccineManagementSystem.Transformers.DoctorTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +34,8 @@ public class DoctorService {
     @Autowired
     AppointmentRepository appointmentRepository;
 
-    public String addDoctor(Doctor doctor) throws EmailShouldNotNullException, DoctorAlreadyPresentException {
+    public String addDoctor(AddDoctorDto doctorDto) throws EmailShouldNotNullException, DoctorAlreadyPresentException {
+        Doctor doctor = DoctorTransformer.doctorDtoToDoctor(doctorDto);
         if(doctor.getEmailId().isEmpty()) {
             throw new EmailShouldNotNullException();
         }
@@ -45,7 +46,7 @@ public class DoctorService {
         return "Doctor "+doctor.getName()+" has been added successfully";
     }
 
-    public String associateDoctor(AssociateDoctorDto associateDoctorDto) throws DoctorNotFound, VaccinationCentreNotFound, AlreadyAssociatedDtos {
+    public String associateDoctor(AssociateDoctorDto associateDoctorDto) throws DoctorNotFound, VaccinationCentreNotFound, AlreadyAssociated {
         Integer drId = associateDoctorDto.getDoctorId();
         Integer centreId = associateDoctorDto.getVaccinationCentreId();
 
@@ -62,7 +63,7 @@ public class DoctorService {
         VaccinationCentre vaccinationCentre = vaccinationCentreOpt.get();
 
         if(doctor.getVaccinationCentre() != null ) {
-            throw new AlreadyAssociatedDtos(doctor.getVaccinationCentre().getAddress());
+            throw new AlreadyAssociated(doctor.getVaccinationCentre().getAddress());
         }
         doctor.setVaccinationCentre(vaccinationCentre);
 
@@ -71,9 +72,9 @@ public class DoctorService {
         return "Doctor "+doctor.getName()+" has been Associated to: "+vaccinationCentre.getCentreName();
     }
 
-    public String updateDoctorByEmailId(DoctorUpdateRequestDto doctorUpdateRequestDto) throws DoctorNotFound, VaccinationCentreNotFound{
-        Integer doctorId = doctorUpdateRequestDto.getDoctorId();
-        Integer newCentreId = doctorUpdateRequestDto.getNewCentreId();
+    public String changeAssociateHospital(DoctorCentreUpdateRequestDto doctorCentreUpdateRequestDto) throws DoctorNotFound, VaccinationCentreNotFound, YouHavePendingAppointmentOnCentre{
+        Integer doctorId = doctorCentreUpdateRequestDto.getDoctorId();
+        Integer newCentreId = doctorCentreUpdateRequestDto.getNewCentreId();
 
         Optional<Doctor> doctorOpt = doctorRepository.findById(doctorId);
         Optional<VaccinationCentre> vaccinationCentreOpt = vaccinationCentreRepository.findById(newCentreId);
@@ -83,8 +84,11 @@ public class DoctorService {
         if(vaccinationCentreOpt.isEmpty()) {
             throw new VaccinationCentreNotFound();
         }
-
         Doctor doctor = doctorOpt.get();
+        Boolean isNotPendingApp = pendingApp(doctor.getAppointmentList());
+        if(!isNotPendingApp) {
+            throw new YouHavePendingAppointmentOnCentre();
+        }
         VaccinationCentre vaccinationCentre = vaccinationCentreOpt.get();
 
         doctor.setVaccinationCentre(vaccinationCentre);
@@ -94,9 +98,18 @@ public class DoctorService {
         return "Doctor "+doctor.getName()+" has been Associated to: "+vaccinationCentre.getCentreName();
     }
 
-    public List<String> doctorBasedOnAppointment(Integer appointmentCount) {
+    private Boolean pendingApp(List<Appointment> appointmentList) {
+        for(Appointment appointment : appointmentList) {
+            if(appointment.getAppointmentStatus().equals(AppointmentStatus.PENDING)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public List<DoctorDto> doctorBasedOnAppointment(Integer appointmentCount) {
         List<Doctor> doctorList = doctorRepository.findAll();
-        List<String> doctors = new ArrayList<>();
+        List<DoctorDto> doctors = new ArrayList<>();
         for(Doctor doctor : doctorList) {
             List<Appointment> appointments = doctor.getAppointmentList();
             int appCount = 0;
@@ -105,20 +118,20 @@ public class DoctorService {
                     appCount++;
                 }
             }
-            if(appCount > appointmentCount) {
-                doctors.add(doctor.getName());
+            if(appCount >= appointmentCount) {
+                doctors.add(DoctorTransformer.doctorToDoctorDto(doctor));
             }
         }
 
         return doctors;
     }
 
-    public List<String> getAllDoctorsBasedOnAgeAndGenderByCenterId(Integer greaterThenAge, Gender gender) {
+    public List<DoctorDto> getAllDoctorsBasedOnAgeAndGenderByCenterId(Integer greaterThenAge, Gender gender) {
         List<Doctor> doctorList = doctorRepository.findAll();
-        List<String> doctors = new ArrayList<>();
+        List<DoctorDto> doctors = new ArrayList<>();
         for (Doctor doctor : doctorList) {
             if(doctor.getAge() > greaterThenAge && doctor.getGender().equals(gender)) {
-                doctors.add(doctor.getName());
+                doctors.add(DoctorTransformer.doctorToDoctorDto(doctor));
             }
         }
         return doctors;
@@ -150,12 +163,25 @@ public class DoctorService {
                 "Ratio Of Doctors(Male:Female): "+Integer.toString(maleR)+" : "+Integer.toString(femaleR);
     }
 
-    public String deleteDoctorById(Integer doctorId) {
-        Optional<Doctor> doctorOpt = doctorRepository.findById(doctorId);
-        if(doctorOpt.isEmpty()) {
-            throw new DoctorNotFound();
-        } Doctor doctor = doctorOpt.get();
+    public String deleteDoctorById(String emailId) throws DoctorDoesNotExistsByThisEmail{
+        Doctor doctor = doctorRepository.findByEmailId(emailId);
+        if(doctor == null) {
+            throw new DoctorDoesNotExistsByThisEmail();
+        }
+
         doctorRepository.delete(doctor);
         return doctor.getName()+" has been removed from Data";
+    }
+
+    public String updateDoctor(String oldEmailId, UpdateDoctorWithEmailId updateDoctorWithEmailId) throws DoctorDoesNotExistsByThisEmail{
+        Doctor doctor = doctorRepository.findByEmailId(oldEmailId);
+        if(doctor == null) {
+            throw new DoctorDoesNotExistsByThisEmail();
+        }
+        doctor.setName(updateDoctorWithEmailId.getName());
+        doctor.setAge(updateDoctorWithEmailId.getAge());
+        doctor.setGender(updateDoctorWithEmailId.getGender());
+        doctorRepository.save(doctor);
+        return "Doctor "+doctor.getName()+" has been updated successfully";
     }
 }

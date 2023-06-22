@@ -3,8 +3,8 @@ package com.example.vaccineManagementSystem.Dtos.RequestDtos;
 import lombok.Data;
 
 @Data
-public class DoctorUpdateRequestDto {
+public class DeleteDoctorDto {
 
     private Integer doctorId;
-    private Integer newCentreId;
+    private String emailId;
 }

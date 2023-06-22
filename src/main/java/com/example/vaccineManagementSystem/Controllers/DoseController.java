@@ -18,7 +18,7 @@ public class DoseController {
         try {
             String result = doseService.giveDose(doseId, appointmentId);
             return new ResponseEntity<>(result, HttpStatus.CREATED);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -28,7 +28,7 @@ public class DoseController {
         try {
             Integer result = doseService.countOfAllGivenDoses();
             return new ResponseEntity<>(Integer.toString(result), HttpStatus.CREATED);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

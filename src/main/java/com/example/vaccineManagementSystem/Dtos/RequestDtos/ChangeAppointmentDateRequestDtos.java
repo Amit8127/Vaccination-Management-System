@@ -8,6 +8,6 @@ import java.sql.Date;
 public class ChangeAppointmentDateRequestDtos {
 
     private Integer appointmentId;
-
+    private Integer userId;
     private Date date;
 }

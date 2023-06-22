@@ -6,6 +6,5 @@ import lombok.Data;
 public class CancelAppointmentRequestDto {
 
     private Integer appointmentId;
-
-
+    private Integer userId;
 }

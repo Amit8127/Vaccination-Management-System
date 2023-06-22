@@ -1,10 +1,12 @@
 package com.example.vaccineManagementSystem.Services;
 
+import com.example.vaccineManagementSystem.Dtos.RequestDtos.AddUserDto;
 import com.example.vaccineManagementSystem.Dtos.RequestDtos.UpdateEmailDto;
 import com.example.vaccineManagementSystem.Exceptions.*;
 import com.example.vaccineManagementSystem.Models.Dose;
 import com.example.vaccineManagementSystem.Models.User;
 import com.example.vaccineManagementSystem.Repositories.UserRepository;
+import com.example.vaccineManagementSystem.Transformers.UserTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +19,15 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public String add(User user) throws EmailShouldNotNullException, UserAlreadyPresentException{
-        if(user.getEmailId() == null) {
+    public String add(AddUserDto userDto) throws EmailShouldNotNullException, EmailIsAlreadyPresent{
+        if(userDto.getEmailId() == null) {
             throw new EmailShouldNotNullException();
         }
-        Optional<User> userOpt = userRepository.findByEmailId(user.getEmailId());
+        Optional<User> userOpt = userRepository.findByEmailId(userDto.getEmailId());
         if(userOpt.isPresent()) {
-            throw new UserAlreadyPresentException();
+            throw new EmailIsAlreadyPresent();
         }
+        User user = UserTransformer.userDtoToUser(userDto);
         userRepository.save(user);
         return "User has been added successfully";
     }
@@ -42,7 +45,7 @@ public class UserService {
         return dose.getVaccinationDate();
     }
 
-    public String updateEmailDto(UpdateEmailDto updateEmailDto) throws UserNotFound{
+    public String updateEmailDto(UpdateEmailDto updateEmailDto) throws UserNotFound, OldEmailIdIsNotMatching{
         Integer userId = updateEmailDto.getUserId();
         Optional<User> userOpt = userRepository.findById(userId);
         if(userOpt.isEmpty()) {
@@ -50,6 +53,9 @@ public class UserService {
         }
 
         User user = userOpt.get();
+        if(!user.getEmailId().equals(updateEmailDto.getOldEmailId())) {
+            throw new OldEmailIdIsNotMatching();
+        }
         user.setEmailId(updateEmailDto.getNewEmailId());
         userRepository.save(user);
 

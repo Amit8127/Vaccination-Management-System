@@ -31,7 +31,7 @@ public class DoseService {
     @Autowired
     AppointmentRepository appointmentRepository;
 
-    public String giveDose(String doseId, Integer appointmentId) throws UserNotFound, UserAlreadyVaccinated{
+    public String giveDose(String doseId, Integer appointmentId) throws UserNotFound, UserAlreadyVaccinated, AppointmentDateException{
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
         if(appointmentOpt.isEmpty()) {
             throw new UserNotFound();

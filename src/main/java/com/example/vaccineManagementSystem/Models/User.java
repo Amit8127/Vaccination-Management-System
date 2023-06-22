@@ -1,9 +1,11 @@
 package com.example.vaccineManagementSystem.Models;
 
 import com.example.vaccineManagementSystem.Enums.Gender;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +13,9 @@ import java.util.List;
 @Entity
 @Table(name = "USERS")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Column(name = "Id")
@@ -34,11 +39,9 @@ public class User {
     @Column(name = "MobileNo")
     private String mobileNo;
 
-    @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Dose dose;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Appointment> appointmentList = new ArrayList<>();
 }

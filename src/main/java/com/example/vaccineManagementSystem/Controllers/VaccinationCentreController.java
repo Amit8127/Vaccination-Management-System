@@ -21,7 +21,7 @@ public class VaccinationCentreController {
         try {
             String result = vaccinationCentreService.addVaccinationCentre(vaccinationCentre);
             return new ResponseEntity<>(result, HttpStatus.CREATED);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -31,7 +31,7 @@ public class VaccinationCentreController {
         try {
             List<String> result = vaccinationCentreService.getAllVaccinationCentres();
             return new ResponseEntity<>(result, HttpStatus.CREATED);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
@@ -41,7 +41,7 @@ public class VaccinationCentreController {
         try {
             String result = vaccinationCentreService.deleteVaccinationCentreById(vaccinationCentreId);
             return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

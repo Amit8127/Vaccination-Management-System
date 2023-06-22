@@ -1,7 +1,6 @@
 package com.example.vaccineManagementSystem.Models;
 
 import com.example.vaccineManagementSystem.Enums.AppointmentStatus;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -28,12 +27,10 @@ public class Appointment {
     @Enumerated(value = EnumType.STRING)
     private AppointmentStatus appointmentStatus = AppointmentStatus.PENDING;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "ToUserId")
     private User user;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "ByDoctorId")
     private Doctor doctor;

@@ -1,9 +1,11 @@
 package com.example.vaccineManagementSystem.Controllers;
 
+import com.example.vaccineManagementSystem.Dtos.RequestDtos.AddDoctorDto;
 import com.example.vaccineManagementSystem.Dtos.RequestDtos.AssociateDoctorDto;
-import com.example.vaccineManagementSystem.Dtos.RequestDtos.DoctorUpdateRequestDto;
+import com.example.vaccineManagementSystem.Dtos.RequestDtos.DoctorCentreUpdateRequestDto;
+import com.example.vaccineManagementSystem.Dtos.RequestDtos.UpdateDoctorWithEmailId;
+import com.example.vaccineManagementSystem.Dtos.ResponcseDtos.DoctorDto;
 import com.example.vaccineManagementSystem.Enums.Gender;
-import com.example.vaccineManagementSystem.Models.Doctor;
 import com.example.vaccineManagementSystem.Services.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,11 +22,11 @@ public class DoctorController {
     private DoctorService doctorService;
 
     @PostMapping("/addNew")
-    public ResponseEntity<String> addDoctor(@RequestBody Doctor doctor) {
+    public ResponseEntity<String> addDoctor(@RequestBody AddDoctorDto doctorDto) {
         try {
-            String result = doctorService.addDoctor(doctor);
+            String result = doctorService.addDoctor(doctorDto);
             return new ResponseEntity<>(result, HttpStatus.CREATED);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -34,37 +36,37 @@ public class DoctorController {
         try {
             String result = doctorService.associateDoctor(associateDoctorDto);
             return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
-    @PutMapping("/updateByEmailId")
-    public ResponseEntity<String> updateDoctorByEmailId(@RequestBody DoctorUpdateRequestDto doctorUpdateRequestDto) {
+    @PutMapping("/changeAssociateHospital")
+    public ResponseEntity<String> changeAssociateHospital(@RequestBody DoctorCentreUpdateRequestDto doctorCentreUpdateRequestDto) {
         try {
-            String result = doctorService.updateDoctorByEmailId(doctorUpdateRequestDto);
+            String result = doctorService.changeAssociateHospital(doctorCentreUpdateRequestDto);
             return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
     @GetMapping("/basedOnAppointmentCount")
-    public ResponseEntity<List<String>> doctorsBasedOnAppointment(@RequestParam Integer appointmentCount) {
+    public ResponseEntity<List<DoctorDto>> doctorsBasedOnAppointment(@RequestParam Integer appointmentCount) {
         try {
-            List<String> result = doctorService.doctorBasedOnAppointment(appointmentCount);
+            List<DoctorDto> result = doctorService.doctorBasedOnAppointment(appointmentCount);
             return new ResponseEntity<>(result, HttpStatus.FOUND);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 
     @GetMapping("/basedOnAgeAndGender")
-    public ResponseEntity<List<String>> getAllDoctorsBasedOnAgeAndGenderByCenterId(@RequestParam Integer greaterThenAge, @RequestParam Gender gender) {
+    public ResponseEntity<List<DoctorDto>> getAllDoctorsBasedOnAgeAndGenderByCenterId(@RequestParam Integer greaterThenAge, @RequestParam Gender gender) {
         try {
-            List<String> list = doctorService.getAllDoctorsBasedOnAgeAndGenderByCenterId(greaterThenAge, gender);
+            List<DoctorDto> list = doctorService.getAllDoctorsBasedOnAgeAndGenderByCenterId(greaterThenAge, gender);
             return new ResponseEntity<>(list, HttpStatus.FOUND);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
@@ -74,17 +76,27 @@ public class DoctorController {
         try {
             String ratio = doctorService.getDoctorsRatioOfMaleAndFemale();
             return new ResponseEntity<>(ratio, HttpStatus.FOUND);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
-    @DeleteMapping("/deleteById")
-    public ResponseEntity<String> deleteDoctorById(@RequestParam Integer doctorId) {
+    @PutMapping("/updateDoctorByEmailId/{oldEmailId}")
+    public ResponseEntity<String> updateDoctorByEmailId(@RequestParam String oldEmailId, @RequestBody UpdateDoctorWithEmailId updateDoctorWithEmailId) {
         try {
-            String result = doctorService.deleteDoctorById(doctorId);
+            String result = doctorService.updateDoctor(oldEmailId,updateDoctorWithEmailId);
+            return new ResponseEntity<>(result, HttpStatus.CREATED);
+        } catch (Exception re) {
+            return new ResponseEntity<>(re.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/deleteById")
+    public ResponseEntity<String> deleteDoctorById(@RequestParam String emilId) {
+        try {
+            String result = doctorService.deleteDoctorById(emilId);
             return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
-        } catch (RuntimeException re) {
+        } catch (Exception re) {
             return new ResponseEntity<>(re.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
