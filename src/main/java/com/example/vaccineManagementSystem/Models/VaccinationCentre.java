@@ -27,10 +27,10 @@ public class VaccinationCentre {
     private String centreName;
 
     @Column(name = "Opening_Time")
-    private String fromTime;
+    private String openTime;
 
     @Column(name = "Closing_Time")
-    private String toTime;
+    private String closeTime;
 
     @Column(name = "Address")
     private String address;

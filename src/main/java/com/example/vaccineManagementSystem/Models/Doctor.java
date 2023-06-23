@@ -22,7 +22,7 @@ public class Doctor {
     @Column(name = "Id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer doctorId;
 
     @Column(name = "Name")
     private String name;

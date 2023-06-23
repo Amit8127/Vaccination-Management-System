@@ -45,7 +45,7 @@ public class DoseService {
             throw new UserAlreadyVaccinated();
         }
         Dose dose = new Dose();
-        dose.setDoseId(doseId);
+        dose.setDoseNo(doseId);
         dose.setUser(user);
         user.setDose(dose);
         appointment.setAppointmentStatus(AppointmentStatus.COMPLETED);

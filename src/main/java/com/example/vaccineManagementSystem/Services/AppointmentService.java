@@ -85,8 +85,8 @@ public class AppointmentService {
         doctorRepository.save(doctor);
         userRepository.save(user);
 
-        String body = "Dear"+user.getName()+",\n\nI hope this email finds you well. " +
-                "I am writing to inform you that your appointment has been successfully booked. " +
+        String body = "Dear"+user.getName()+",\n\nI hope this email finds you well. \n" +
+                "I am writing to inform you that your appointment has been successfully booked. \n" +
                 "We are pleased to confirm that your preferred date and time have been secured.\n \n" +
                 "Appointment Details:\n\n" +
                 "Date: "+appointment.getDate()+"\n" +

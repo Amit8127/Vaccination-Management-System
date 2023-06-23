@@ -14,10 +14,10 @@ public class Dose {
     @Column(name = "Id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id; //primary key
+    private Integer doseId; //primary key
 
     @Column(unique = true, name = "DoseId")
-    private String doseId; //unique key
+    private String doseNo; //unique key
 
     @Column(name = "VaccinationDate")
     @CreationTimestamp
