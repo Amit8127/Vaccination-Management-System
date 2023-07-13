@@ -24,9 +24,7 @@ This is a **Vaccine Management System** that is built using **REST API** and usi
 # Overview of Project
 
 ## Flow Diagram
-
-![VMS-Photo.png](src%2Fmain%2Fjava%2Fcom%2Fexample%2FvaccineManagementSystem%2FImages%2FVMS-Photo.png)
-
+![flowchart.png](src%2Fmain%2Fjava%2Fcom%2Fexample%2FvaccineManagementSystem%2FImages%2Fflowchart.png)
 ## APIs Screen Shots
 
 ![User.png](src%2Fmain%2Fjava%2Fcom%2Fexample%2FvaccineManagementSystem%2FImages%2FUser.png)
